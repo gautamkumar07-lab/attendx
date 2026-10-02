@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment: {POSTGRES_USER: attendx, POSTGRES_PASSWORD: attendx, POSTGRES_DB: attendx}
+    volumes: [pgdata:/var/lib/postgresql/data]
+  api:
+    build: ./backend
+    env_file: ./backend/.env.example
+    environment: {JWT_SECRET: "${JWT_SECRET:-dev-secret-change-me}"}
+    depends_on: [db]
+    ports: ["4000:4000"]
+  web:
+    build: ./frontend
+    ports: ["8080:80"]
+    depends_on: [api]
+volumes: {pgdata: {}}
